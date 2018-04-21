@@ -1,5 +1,5 @@
 import parser
-from flask import Flask, json, request
+from flask import Flask, json, request, jsonify
 from flask_restful import reqparse
 
 app = Flask(__name__)
@@ -65,6 +65,25 @@ def user():
     args = parser.parse_args()
     user = {'rate' : args.get('rate'), 'name': args['name']}
     return json.dumps(user)
+
+#####################################  json request
+
+#访问方式：
+# curl -d {\"Command\":1,\"MPId\":\"5555\",\"Pin\":\"3434\",\"MobileReqId\":\"123\"}
+# -H "Content-Type: application/json"  http://127.0.0.1:5000/json_url
+@app.route('/json_url', methods=['POST'])
+def json_url():
+    data = request.data.decode('utf-8')
+
+    # convert request data string to json
+    ScutJson = json.loads(data)
+    ScutJson["result"] = 0
+    print(ScutJson)
+
+    # convert json to utf8
+    # method 1 : return jsonify(ScutJson)
+    # method 2
+    return json.dumps(ScutJson,ensure_ascii=False).encode('utf8')
 
 
 if __name__ == '__main__':
