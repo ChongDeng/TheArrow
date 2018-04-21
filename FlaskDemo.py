@@ -1,7 +1,10 @@
+import parser
 from flask import Flask, json, request
+from flask_restful import reqparse
 
 app = Flask(__name__)
 
+#默认为get方法！！！
 @app.route('/')
 def hello_world():
     return 'Hello World!'
@@ -32,5 +35,38 @@ def query_user():
     id = request.args.get('id')
     return 'query user:' + id
 
+#####################################  post request
+
+#访问方式： curl -X POST http://127.0.0.1:5000/scut_post
+@app.route('/scut_post', methods=['POST'])
+def scut_post():
+    return 'hello post'
+
+
+"""
+ test4:
+    curl -X POST    http://127.0.0.1:5000/index/nidaye
+    curl -X GET     http://127.0.0.1:5000/index/nidaye
+    curl -X PUT     http://127.0.0.1:5000/index/nidaye
+    curl -X DELETE  http://127.0.0.1:5000/index/nidaye
+
+ """
+@app.route('/index/<user>', methods=['GET', 'PUT', 'POST', 'DELETE'])
+def http_all(user):
+    return 'index %s' % user
+
+
+#访问方式： curl 127.0.0.1:5000/user  -d "name=chongdeng&rate=99&other=1&bar=yes" -X POST
+@app.route('/user', methods=['POST'])
+def user():
+    parser = reqparse.RequestParser()
+    parser.add_argument('rate', type=int, help='Rate to charge for this resource')
+    parser.add_argument('name', type=str, required=True)
+    args = parser.parse_args()
+    user = {'rate' : args.get('rate'), 'name': args['name']}
+    return json.dumps(user)
+
+
 if __name__ == '__main__':
     app.run()
+    # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
