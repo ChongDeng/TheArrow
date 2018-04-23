@@ -1,5 +1,5 @@
 import parser
-from flask import Flask, json, request, jsonify, redirect, render_template
+from flask import Flask, json, request, jsonify, redirect, render_template, url_for
 from flask_restful import reqparse, abort
 
 app = Flask(__name__)
@@ -160,6 +160,30 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+#####################################  url_for
+
+#访问方式： 1 浏览器中 http://127.0.0.1:5000/query_user?id=5
+#          2 advanced rest client中也只能用http://127.0.0.1:5000/query_user?id=5
+@app.route('/query2')
+def query2():
+    id = request.args.get('id')
+    return 'query user:' + id
+
+@app.route('/url_for')
+def url_for_test():
+    return redirect(url_for('query2', id = '5', _external = True))
+
+@app.route("/query3/<name>")
+def query3(name):
+    obj = {'name': name, "msg": 'hello'}
+    res = json.dumps(obj)
+    return res
+
+@app.route('/url_for2')
+def url_for2_test():
+    return redirect(url_for('query3', name = 'hello', _external = True))
 
 if __name__ == '__main__':
     app.run()
