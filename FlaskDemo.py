@@ -129,6 +129,20 @@ def render1():
 def render2(name):
     return render_template('user.html', name = name + " shit")
 
+
+
+#####################################  template inheritance
+
+@app.route('/inherit')
+def inherit_test():
+    return render_template('scut_base.html')
+
+@app.route('/inherit2')
+def inherit_test2():
+    return render_template('scut_child.html')
+
 if __name__ == '__main__':
     app.run()
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
+
+
