@@ -21,6 +21,13 @@ def scut_with_para(name):
     res = json.dumps(obj)
     return res
 
+@app.route("/scut_type/<int:age>")
+def scut_with_para_type(age):
+    obj = {'age': age, "msg": 'hello'}
+    res = json.dumps(obj)
+    return res
+
+
 
 #访问方式：http://127.0.0.1:5000/page/2/total/10
 @app.route("/page/<pages>/total/<total>")
