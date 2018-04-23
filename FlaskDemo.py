@@ -4,6 +4,9 @@ from flask_restful import reqparse, abort
 
 app = Flask(__name__)
 
+from flask_bootstrap import Bootstrap
+bootstrap = Bootstrap(app)
+
 #默认为get方法！！！
 @app.route('/')
 def hello_world():
@@ -140,6 +143,13 @@ def inherit_test():
 @app.route('/inherit2')
 def inherit_test2():
     return render_template('scut_child.html')
+
+#####################################  bootstrap
+
+@app.route('/bootstrap')
+def bootstrap_test():
+    return render_template('scut_bootstrap_base.html', name = "Tom")
+
 
 if __name__ == '__main__':
     app.run()
