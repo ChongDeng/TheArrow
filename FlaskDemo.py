@@ -7,6 +7,9 @@ app = Flask(__name__)
 from flask_bootstrap import Bootstrap
 bootstrap = Bootstrap(app)
 
+from flask_moment import Moment
+moment = Moment(app)
+
 #默认为get方法！！！
 @app.route('/')
 def hello_world():
@@ -191,6 +194,14 @@ def url_for2_test():
 @app.route('/static_test')
 def static_test():
     return render_template('404.html'), 404
+
+
+#####################################  local date and time
+@app.route('/local')
+def local_test():
+    from datetime import datetime
+    return render_template('local.html',
+                           current_time = datetime.utcnow())
 
 if __name__ == '__main__':
     app.run()
