@@ -151,6 +151,16 @@ def bootstrap_test():
     return render_template('scut_bootstrap_base.html', name = "Tom")
 
 
+#####################################  error page
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
 if __name__ == '__main__':
     app.run()
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
