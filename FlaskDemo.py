@@ -1,5 +1,5 @@
 import parser
-from flask import Flask, json, request, jsonify
+from flask import Flask, json, request, jsonify, redirect
 from flask_restful import reqparse
 
 app = Flask(__name__)
@@ -91,6 +91,24 @@ def json_url():
     # method 1 : return jsonify(ScutJson)
     # method 2
     return json.dumps(ScutJson,ensure_ascii=False).encode('utf8')
+
+ #####################################  request object
+@app.route('/request')
+def request_test():
+    print (app.url_map)
+    return "yes"
+
+
+ #####################################  response
+@app.route('/bad_response')
+def bad_response_test():
+    return '<h1>Bad Request</h1>', 400
+
+
+ #####################################  redirect
+@app.route('/redirect_test')
+def redirect_test():
+    return redirect('http://www.baidu.com')
 
 
 if __name__ == '__main__':
