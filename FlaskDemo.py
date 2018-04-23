@@ -3,12 +3,21 @@ from flask import Flask, json, request, jsonify, redirect, render_template, url_
 from flask_restful import reqparse, abort
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'I dont\'t know what is pwd'
 
 from flask_bootstrap import Bootstrap
 bootstrap = Bootstrap(app)
 
 from flask_moment import Moment
 moment = Moment(app)
+
+from flask_wtf import Form
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
+class NameForm(Form):
+    name = StringField('What is your name?', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 #默认为get方法！！！
 @app.route('/')
@@ -202,6 +211,18 @@ def local_test():
     from datetime import datetime
     return render_template('local.html',
                            current_time = datetime.utcnow())
+
+#####################################  web form test
+
+@app.route('/web_form', methods=['GET', 'POST'])
+def web_form_test():
+    name = None
+    form = NameForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data = ''
+    return render_template('index.html', form=form, name=name)
+
 
 if __name__ == '__main__':
     app.run()
