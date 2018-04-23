@@ -1,6 +1,6 @@
 import parser
-from flask import Flask, json, request, jsonify, redirect
-from flask_restful import reqparse
+from flask import Flask, json, request, jsonify, redirect, render_template
+from flask_restful import reqparse, abort
 
 app = Flask(__name__)
 
@@ -110,6 +110,20 @@ def bad_response_test():
 def redirect_test():
     return redirect('http://www.baidu.com')
 
+
+@app.route('/user/<id>')
+def get_user(id):
+    if id != 5:
+        print("will abort now!")
+        abort(404)
+    print("this line will not be invoked!")
+    return '<h1>This will also not be invoked!</h1>'
+
+#####################################  render
+
+@app.route('/render1')
+def render1():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run()
