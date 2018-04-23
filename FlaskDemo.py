@@ -185,6 +185,13 @@ def query3(name):
 def url_for2_test():
     return redirect(url_for('query3', name = 'hello', _external = True))
 
+
+#####################################  static
+
+@app.route('/static_test')
+def static_test():
+    return render_template('404.html'), 404
+
 if __name__ == '__main__':
     app.run()
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
