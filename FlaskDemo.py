@@ -1,5 +1,5 @@
 import parser
-from flask import Flask, json, request, jsonify, redirect, render_template, url_for
+from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session
 from flask_restful import reqparse, abort
 
 app = Flask(__name__)
@@ -222,6 +222,15 @@ def web_form_test():
         name = form.name.data
         form.name.data = ''
     return render_template('index.html', form=form, name=name)
+
+
+@app.route('/web_form2', methods=['GET', 'POST'])
+def web_form_test2():
+    form = NameForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        return redirect(url_for('web_form_test2'))
+    return render_template('index.html', form=form, name=session.get('name'))
 
 
 if __name__ == '__main__':
