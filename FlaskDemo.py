@@ -1,9 +1,20 @@
 import parser
+
+import os
 from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session
 from flask_restful import reqparse, abort
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'I dont\'t know what is pwd'
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy(app)
 
 from flask_bootstrap import Bootstrap
 bootstrap = Bootstrap(app)
@@ -18,6 +29,25 @@ from wtforms.validators import DataRequired
 class NameForm(Form):
     name = StringField('What is your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    users = db.relationship('User', backref='role')
+
+    def __repr__(self):
+        return '<SCUT Role %r>' % self.name
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    def __repr__(self):
+        return '<SCUT User %r>' % self.username
 
 #默认为get方法！！！
 @app.route('/')
@@ -231,6 +261,32 @@ def web_form_test2():
         session['name'] = form.name.data
         return redirect(url_for('web_form_test2'))
     return render_template('index.html', form=form, name=session.get('name'))
+
+
+#####################################  database test
+@app.route('/create_db')
+def db_test():
+    db.create_all()
+    return 'hello world'
+
+@app.route('/insert_row')
+def insert_row_test():
+    db.create_all()
+    admin_role = Role(name='Admin')
+    mod_role = Role(name='Moderator')
+    user_role = Role(name='User')
+
+    user_john = User(username='john', role=admin_role)
+    user_susan = User(username='susan', role=user_role)
+    user_david = User(username='david', role=user_role)
+
+    db.session.add_all([admin_role, mod_role, user_role,
+                         user_john, user_susan, user_david])
+    db.session.commit()
+    # following line will invoke error!
+    #return admin_role.id + ", " + mod_role.id + ", " + user_role.id
+    return "success"
+
 
 
 if __name__ == '__main__':
