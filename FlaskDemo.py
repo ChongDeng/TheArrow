@@ -13,6 +13,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] =\
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+app.config['MAIL_SERVER'] = 'smtp.qq.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_SENDER'] = '最帅的人 Chong Deng <854143470@qq.com>'
+
+from flask_mail import Mail, Message
+mail = Mail(app)
+
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy(app)
 
@@ -21,6 +32,7 @@ bootstrap = Bootstrap(app)
 
 from flask_moment import Moment
 moment = Moment(app)
+
 
 from flask_wtf import Form
 from wtforms import StringField, SubmitField
@@ -360,6 +372,18 @@ def modify_db():
 
     return "success"
 
+
+@app.route('/mail')
+def mail_test():
+    msg = Message(subject = "Hello World!",
+                  sender = app.config['MAIL_SENDER'],
+                  recipients = ['420378081@qq.com'])
+    msg.body = 'hey man, how are you'
+    msg.html = '<b>嘿嘿</b>'
+
+    mail.send(msg)
+
+    return "success"
 
 # @app.route('/modify_delete_row')
 # def modify_delete_row_test():
