@@ -287,7 +287,62 @@ def insert_row_test():
     #return admin_role.id + ", " + mod_role.id + ", " + user_role.id
     return "success"
 
+@app.route('/db_query1')
+def db_query_test1():
+    #1 取回模型对应表中的所有记录：
+    RoleList = Role.query.all()
+    for RoleItem in RoleList:
+        print("get all result:" , RoleItem)
 
+    return "success"
+
+@app.route('/db_query2')
+def db_query_test2():
+    # 1 取回username='john'的所有记录：
+    print(str(User.query.filter_by(username='john')))
+    for UserItem in User.query.filter_by(username='john').all():
+        print("get specified result:", UserItem)
+
+    return "success"
+
+@app.route('/db_query3')
+def db_query_test3():
+    print(str(User.query.filter_by(username='john', role_id=1)))
+    for UserItem in User.query.filter_by(username='john', role_id=1).all():
+        print("get specified result:", UserItem)
+    return "success"
+
+
+@app.route('/db_query4')
+def db_query_test4():
+    # 1 取回name='john'的所有记录; 因为表users没有字段name,只有字段username，所以下面代码报错
+    print(str(User.query.filter_by(name='john')))
+    for UserItem in User.query.filter_by(name='john').all():
+        print("get specified result:", UserItem)
+
+    return "success"
+
+@app.route('/db_query5')
+def db_query_test5():
+    #多表的关联查询: 查找角色为"User" 的所有用户：
+    user_role = Role.query.filter_by(name='User').first()
+
+    print(str(User.query.filter_by(role=user_role)))
+    for UserItem in User.query.filter_by(role=user_role).all():
+        print("get specified result:", UserItem)
+
+    return "success"
+
+
+
+# @app.route('/modify_delete_row')
+# def modify_delete_row_test():
+#     admin_role = Role(name='Admin')
+#     admin_role.name = 'Administrator'
+#     db.session.add(admin_role)
+#     db.session.commit()
+#
+#     return "success"
 
 if __name__ == '__main__':
     app.run()
