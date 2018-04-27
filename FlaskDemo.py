@@ -1,7 +1,7 @@
 import parser
 
 import os
-from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session
+from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session, flash
 from flask_restful import reqparse, abort
 
 app = Flask(__name__)
@@ -262,6 +262,21 @@ def web_form_test2():
         return redirect(url_for('web_form_test2'))
     return render_template('index.html', form=form, name=session.get('name'))
 
+#####################################  flash test
+
+@app.route('/flash', methods=['GET', 'POST'])
+def falsh_test():
+    form = NameForm()
+    if form.validate_on_submit():
+        old_name = session.get('name')
+        if old_name is not None and old_name != form.name.data:
+            flash('Looks like you have changed your name!')
+            flash('Test!')
+        session['name'] = form.name.data
+        return redirect(url_for('web_form_test2'))
+    return render_template('index.html', form=form, name=session.get('name'))
+
+
 
 #####################################  database test
 @app.route('/create_db')
@@ -345,7 +360,7 @@ def db_query_test5():
 #     return "success"
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
 
 
