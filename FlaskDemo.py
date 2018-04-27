@@ -349,6 +349,17 @@ def db_query_test5():
     return "success"
 
 
+@app.route('/modify_db')
+def modify_db():
+    for UserItem in User.query.all():
+        if UserItem.username == 'john' :
+            print("get specified result:", UserItem)
+            UserItem.username = 'hanleilei'
+            db.session.add(UserItem)
+            db.session.commit()
+
+    return "success"
+
 
 # @app.route('/modify_delete_row')
 # def modify_delete_row_test():
@@ -360,7 +371,7 @@ def db_query_test5():
 #     return "success"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
 
 
