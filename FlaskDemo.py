@@ -399,13 +399,32 @@ def send_email(to, subject, template, **kwargs):
     msg.body = render_template(template + '.txt', **kwargs)
     msg.html = render_template(template + '.html', **kwargs)
 
+    print("basedir: " , basedir)
     with app.open_resource("static/image/sex.jpg") as fp:
         msg.attach("heihei.jpg", "image/jpg", fp.read())
+
+    with app.open_resource("static/video/heihei.mp4") as fp:
+        msg.attach("喜欢吗.mp4", "video/mp4", fp.read())
+
+    # Attachments = ['static\image\sex.jpg', 'static\\video\heihei.mp4']
+    # Attachments = ['static\image\sex.jpg']
+    # for f in Attachments:
+    #     if ".jpg" in f:
+    #         ContentType = "image/jpg"
+    #     elif  ".mp4" in f:
+    #         ContentType = "video/mp4"
+    #
+    #     with app.open_resource(f) as fp:
+    #         msg.attach(filename = os.path.join(basedir, f), data=fp.read(),
+    #                    content_type = ContentType)
+            # msg.attach(filename= os.path.join(basedir, f), data=fp.read(),
+            #            content_type='application/octet-stream')
+
     mail.send(msg)
 
 @app.route('/mail2', methods=['GET', 'POST'])
 def mail2():
-    send_email(['854143470@qq.com', '420378081@qq.com'], '代码测试：周末出来吃饭',
+    send_email(['fqyyang@gmail.com', 'nan.ding@gmail.com'], '代码测试：周末出来吃饭',
                'mail/lunch', time='04/29/2018 12:00:00')
 
     # send_email('420378081@qq.com', '代码测试：周末出来吃饭',
@@ -414,7 +433,7 @@ def mail2():
     return "success"
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
 
 
