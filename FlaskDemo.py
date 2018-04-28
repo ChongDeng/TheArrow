@@ -1,6 +1,8 @@
 import parser
 
 import os
+from threading import Thread
+
 from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session, flash
 from flask_restful import reqparse, abort
 
@@ -432,8 +434,31 @@ def mail2():
 
     return "success"
 
+
+
+@app.route('/async_email')
+def async_email_test():
+    send_email2(['fqyyang@gmail.com', 'nan.ding@gmail.com'], '代码测试：异步发送邮件 周末出来吃饭',
+               'mail/lunch', time='04/29/2018 12:00:00')
+    return "success"
+
+def send_email2(to, subject, template, **kwargs):
+    msg = Message(app.config['MAIL_SUBJECT_PREFIX'] + '-' + subject,
+                  sender=app.config['MAIL_SENDER'], recipients=to)
+
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr
+
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run()
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
 
 
