@@ -20,6 +20,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_SENDER'] = '最帅的人 Chong Deng <854143470@qq.com>'
+app.config['MAIL_SUBJECT_PREFIX'] = '以帅之名'
 
 from flask_mail import Mail, Message
 mail = Mail(app)
@@ -377,7 +378,7 @@ def modify_db():
 def mail_test():
     msg = Message(subject = "Hello World!",
                   sender = app.config['MAIL_SENDER'],
-                  recipients = ['420378081@qq.com'])
+                  recipients = ['fqyyang@gmail.com'])
     msg.body = 'hey man, how are you'
     msg.html = '<b>嘿嘿</b>'
 
@@ -385,14 +386,32 @@ def mail_test():
 
     return "success"
 
-# @app.route('/modify_delete_row')
-# def modify_delete_row_test():
-#     admin_role = Role(name='Admin')
-#     admin_role.name = 'Administrator'
-#     db.session.add(admin_role)
-#     db.session.commit()
-#
-#     return "success"
+def send_email(to, subject, template, **kwargs):
+    if isinstance(to, list):
+        print("send email to multiple receipients")
+        msg = Message(app.config['MAIL_SUBJECT_PREFIX'] + '-' + subject,
+                      sender=app.config['MAIL_SENDER'], recipients=to)
+    else:
+        print("send email to on receipient")
+        msg = Message(app.config['MAIL_SUBJECT_PREFIX'] + '-' + subject,
+                      sender=app.config['MAIL_SENDER'], recipients=[to])
+
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+
+    with app.open_resource("static/image/sex.jpg") as fp:
+        msg.attach("heihei.jpg", "image/jpg", fp.read())
+    mail.send(msg)
+
+@app.route('/mail2', methods=['GET', 'POST'])
+def mail2():
+    send_email(['854143470@qq.com', '420378081@qq.com'], '代码测试：周末出来吃饭',
+               'mail/lunch', time='04/29/2018 12:00:00')
+
+    # send_email('420378081@qq.com', '代码测试：周末出来吃饭',
+    #            'mail/lunch', time='04/29/2018 12:00:00')
+
+    return "success"
 
 if __name__ == '__main__':
     app.run()

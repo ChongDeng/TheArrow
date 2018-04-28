@@ -1,1 +1,1 @@
-User {{ user.username }} has joined.
+{{ time }} 出来吃饭如何？
