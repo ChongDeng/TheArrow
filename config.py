@@ -15,9 +15,9 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_SUBJECT_PREFIX = '[Green Array]'
-    MAIL_SENDER = 'Green Array <854143470@qq.com>'
+    MAIL_SENDER = 'Green Arrow <854143470@qq.com>'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    ADMIN = 'fqyyang@gmail.com'
     @staticmethod
     def init_app(app):
         pass
