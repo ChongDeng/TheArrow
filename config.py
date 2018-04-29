@@ -14,8 +14,8 @@ class Config:
     MAIL_USE_SSL = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_SUBJECT_PREFIX = '[Green Array]'
-    MAIL_SENDER = 'Green Arrow <854143470@qq.com>'
+    MAIL_SUBJECT_PREFIX = '[The Arrow]'
+    MAIL_SENDER = 'The Arrow <854143470@qq.com>'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ADMIN = 'fqyyang@gmail.com'
     @staticmethod
