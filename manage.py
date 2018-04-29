@@ -22,6 +22,41 @@ def create_db():
 
     return "success"
 
+@app.route('/create_db2')
+def create_db2():
+    db.drop_all()
+    db.create_all()
+    admin_role = Role(name='Admin')
+    mod_role = Role(name='Moderator')
+    user_role = Role(name='User')
+
+    user_john = User(email='john@example.com', username='john', password='cat', role=admin_role)
+
+    db.session.add_all([admin_role, mod_role, user_role,
+                        user_john])
+
+    db.session.commit()
+
+    return "success"
+
+@app.route('/create_db3')
+def create_db3():
+    db.drop_all()
+    db.create_all()
+    admin_role = Role(name='Admin')
+    mod_role = Role(name='Moderator')
+    user_role = Role(name='User')
+
+    user_john = User(email='john@example.com', username='john', password='cat',
+                     role=admin_role, confirmed = False)
+
+    db.session.add_all([admin_role, mod_role, user_role,
+                        user_john])
+
+    db.session.commit()
+
+    return "success"
+
 @app.route('/test')
 def test():
     """Run the unit tests."""
