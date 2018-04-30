@@ -1,6 +1,9 @@
 from flask import render_template, session, redirect, url_for, current_app
+from flask_login import login_required
+
+from app.decorators import admin_required, permission_required
 from .. import db
-from ..models import User
+from ..models import User, Permission
 from ..email import send_email
 from . import main
 from .forms import NameForm
@@ -9,6 +12,17 @@ from .forms import NameForm
 def index():
     return "this is main page"
 
+@main.route('/admin')
+@login_required
+@admin_required
+def for_admins_only():
+    return "For administrators!"
+
+@main.route('/moderator')
+@login_required
+@permission_required(Permission.MODERATE)
+def for_moderators_only():
+    return "For comment moderators!"
 
 # @main.route('/', methods=['GET', 'POST'])
 # def index():
