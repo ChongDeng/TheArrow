@@ -1,4 +1,7 @@
 import os
+
+from flask import render_template
+
 from app import create_app, db
 from app.models import User, Role
 
@@ -71,6 +74,10 @@ def insert_roles_test():
     for r in Role.query.all():
         print(r)
     return "success"
+
+@app.route('/bootstrap')
+def bootstrap_test():
+    return render_template("my_bootstrap_test.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
