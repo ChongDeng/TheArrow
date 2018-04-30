@@ -402,17 +402,17 @@ def send_email(to, subject, template, **kwargs):
     msg.html = render_template(template + '.html', **kwargs)
 
     print("basedir: " , basedir)
-    with app.open_resource("static/image/sex.jpg") as fp:
-        msg.attach("heihei.jpg", "image/jpg", fp.read())
+    with app.open_resource("static/images/sex.jpg") as fp:
+        msg.attach("heihei.jpg", "images/jpg", fp.read())
 
     with app.open_resource("static/video/heihei.mp4") as fp:
         msg.attach("喜欢吗.mp4", "video/mp4", fp.read())
 
-    # Attachments = ['static\image\sex.jpg', 'static\\video\heihei.mp4']
-    # Attachments = ['static\image\sex.jpg']
+    # Attachments = ['static\images\sex.jpg', 'static\\video\heihei.mp4']
+    # Attachments = ['static\images\sex.jpg']
     # for f in Attachments:
     #     if ".jpg" in f:
-    #         ContentType = "image/jpg"
+    #         ContentType = "images/jpg"
     #     elif  ".mp4" in f:
     #         ContentType = "video/mp4"
     #
