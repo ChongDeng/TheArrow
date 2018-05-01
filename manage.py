@@ -79,6 +79,10 @@ def insert_roles_test():
 def bootstrap_test():
     return render_template("my_bootstrap_test.html")
 
+@app.route('/bootstrap_signin')
+def bootstrap_signin():
+    return render_template("my_bootstrap_signin.html")
+
 if __name__ == '__main__':
     app.run(debug=True)
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
