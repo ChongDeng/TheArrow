@@ -3,6 +3,7 @@ import os
 from flask import render_template
 
 from app import create_app, db
+from app.fake import insert_users, insert_posts
 from app.models import User, Role
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -82,6 +83,12 @@ def bootstrap_test():
 @app.route('/bootstrap_signin')
 def bootstrap_signin():
     return render_template("my_bootstrap_signin.html")
+
+@app.route('/insert_fake')
+def insert_fake():
+    insert_users()
+    insert_posts()
+    return "success"
 
 if __name__ == '__main__':
     app.run(debug=True)

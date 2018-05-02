@@ -18,6 +18,7 @@ class Config:
     MAIL_SENDER = 'The Arrow <854143470@qq.com>'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ADMIN = 'fqyyang@gmail.com'
+    POSTS_PER_PAGE = 20
     @staticmethod
     def init_app(app):
         pass
