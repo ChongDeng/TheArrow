@@ -90,6 +90,27 @@ def insert_fake():
     insert_posts()
     return "success"
 
+@app.route('/insert_follows')
+def insert_follows():
+
+    db.create_all() # used to creaate all the tables specified in the models.py
+
+    # user_role = Role(name='User')  error
+    user_role = Role.query.filter_by(name = 'User').first()
+    u1 = User(email='d1@example.com', username='d1', password='cat',
+                     role=user_role, confirmed=False)
+    u2 = User(email='d2@example.com', username='d2', password='cat',
+              role=user_role, confirmed=False)
+    db.session.add(u1)
+    db.session.add(u2)
+    # db.session.commit()
+    #
+    u1.follow(u2)
+    db.session.commit()
+
+    return "success"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
