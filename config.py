@@ -20,6 +20,7 @@ class Config:
     ADMIN = 'fqyyang@gmail.com'
     POSTS_PER_PAGE = 20
     FOLLOWERS_PER_PAGE = 20
+    COMMENTS_PER_PAGE = 20
     @staticmethod
     def init_app(app):
         pass

@@ -61,6 +61,13 @@ def create_db3():
 
     return "success"
 
+@app.route('/create_db4')
+def create_db4():
+    db.create_all()
+    db.session.commit()
+
+    return "success"
+
 @app.route('/test')
 def test():
     """Run the unit tests."""
