@@ -482,23 +482,45 @@ def send_async_email(app, msg):
 
 #####################################  httpauth test
 
+# from flask_httpauth import HTTPBasicAuth
+# auth = HTTPBasicAuth()
+#
+# @auth.get_password
+# def get_password(username):
+#     if username == 'scut':
+#         return '401'
+#     return None
+#
+# @auth.error_handler
+# def unauthorized():
+#     return make_response(jsonify({'error': 'Unauthorized access'}), 401)
+#
+# @app.route('/credential', methods=['GET'])
+# @auth.login_required
+# def login():
+#     return jsonify({'log in result': "success"})
+
+
+#####################################  httpauth test2
 from flask_httpauth import HTTPBasicAuth
 auth = HTTPBasicAuth()
 
-@auth.get_password
-def get_password(username):
-    if username == 'scut':
-        return '401'
-    return None
+@auth.verify_password
+def verify_password(username, password):
+    if username != 'scut' or password != '401':
+        return False
+
+    return True
 
 @auth.error_handler
 def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
+    return make_response(jsonify({ 'login': 'failure'}), 403)
 
-@app.route('/credential', methods=['GET'])
+@app.route('/auth2')
 @auth.login_required
-def login():
-    return jsonify({'log in result': "success"})
+def auth2_func():
+    return jsonify({ 'login': 'success' })
+
 
 if __name__ == '__main__':
     app.run()
