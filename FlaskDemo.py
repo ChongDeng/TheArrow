@@ -3,7 +3,7 @@ import parser
 import os
 from threading import Thread
 
-from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session, flash
+from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session, flash, make_response
 from flask_restful import reqparse, abort
 
 app = Flask(__name__)
@@ -152,7 +152,25 @@ def json_url():
     # method 2
     return json.dumps(ScutJson,ensure_ascii=False).encode('utf8')
 
- #####################################  request object
+
+#####################################  json request2
+#访问方式：
+# curl -d {\"Command\":1,\"MPId\":\"5555\",\"Pin\":\"3434\",\"title\":\"test\"}
+# -H "Content-Type: application/json"  http://127.0.0.1:5000/json_url2
+@app.route('/json_url2', methods=['POST'])
+def json_url2():
+    if not request.json or not 'title' in request.json:
+        abort(400)
+    task = {
+        'id': 1,
+        'title': request.json['title'],
+        'description': request.json.get('description', ""),
+        'done': False
+    }
+    return jsonify({'task': task}), 201
+
+
+#####################################  request object
 @app.route('/request')
 def request_test():
     print (app.url_map)
@@ -210,13 +228,18 @@ def bootstrap_test():
 
 #####################################  error page
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return render_template('404.html'), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+#####################################  error json
+@app.errorhandler(404)
+def page_not_found(e):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 #####################################  url_for
@@ -456,6 +479,26 @@ def send_email2(to, subject, template, **kwargs):
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
+
+#####################################  httpauth test
+
+from flask_httpauth import HTTPBasicAuth
+auth = HTTPBasicAuth()
+
+@auth.get_password
+def get_password(username):
+    if username == 'scut':
+        return '401'
+    return None
+
+@auth.error_handler
+def unauthorized():
+    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
+
+@app.route('/credential', methods=['GET'])
+@auth.login_required
+def login():
+    return jsonify({'log in result': "success"})
 
 if __name__ == '__main__':
     app.run()
