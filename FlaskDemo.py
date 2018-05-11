@@ -5,6 +5,7 @@ from threading import Thread
 
 from flask import Flask, json, request, jsonify, redirect, render_template, url_for, session, flash, make_response
 from flask_restful import reqparse, abort
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'I dont\'t know what is pwd'
@@ -37,8 +38,8 @@ from flask_moment import Moment
 moment = Moment(app)
 
 
-from flask_wtf import Form
-from wtforms import StringField, SubmitField
+from flask_wtf import Form, FlaskForm
+from wtforms import StringField, SubmitField, FileField
 from wtforms.validators import DataRequired
 
 class NameForm(Form):
@@ -63,6 +64,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<SCUT User %r>' % self.username
+
 
 #默认为get方法！！！
 @app.route('/')
@@ -522,8 +524,55 @@ def auth2_func():
     return jsonify({ 'login': 'success' })
 
 
+
+#####################################  upload
+
+@app.route('/upload')
+def upload_func():
+    return render_template('upload.html')
+
+#####################################  upload 2
+UPLOAD_FOLDER='upload'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#将上传文件限制为最大 32 MB 。 如果请求传输一个更大的文件， Flask 会抛出一个RequestEntityTooLarge异常
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
+app_dir = os.path.abspath(os.path.dirname(__file__))
+ALLOWED_EXTENSIONS = set(['txt','png','jpg','xls','JPG','PNG','xlsx','gif','GIF'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload2', methods=['GET', 'POST'])
+def upload2():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            upload_dir = os.path.join(app_dir, app.config['UPLOAD_FOLDER'])
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+            uploaded_file = request.files['file']
+
+            fname = secure_filename(uploaded_file.filename)
+            print('file name is %s' % fname)
+            uploaded_file.save(os.path.join(upload_dir, fname))  # 保存文件到upload目录
+
+            flash("upload successfully!")
+            return redirect(url_for('upload2'))
+    return render_template('upload2.html')
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
     # app.run(debug=True) 启动调试！！！！！ 一定不能用于生产环境中，因为用户会在错误的页面中执行python程序来黑客你
 
 
