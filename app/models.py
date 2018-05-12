@@ -1,8 +1,10 @@
 from datetime import datetime
 
-from flask import current_app
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import current_app, url_for
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from app.exceptions import ValidationError
 from . import db, login_manager
 from flask_login import UserMixin, AnonymousUserMixin
 
@@ -138,6 +140,22 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'reset': self.id}).decode('utf-8')
 
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
     @staticmethod
     def reset_password(token, new_password):
         s = Serializer(current_app.config['SECRET_KEY'])
@@ -214,6 +232,21 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_posts', id=self.id, _external= True),
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'comment_count': self.comments.count()
+        }
+        return json_post
+
+    @staticmethod
+    def from_json(json_post):
+        body = json_post.get('body')
+        if body is None or body == '':
+            raise ValidationError('post does not have a body')
+        return Post(body=body)
 
 class Comment(db.Model):
     __tablename__ = 'comments'
