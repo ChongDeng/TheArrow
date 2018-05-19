@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template
+from flask import render_template, url_for
 
 from app import create_app, db
 from app.fake import insert_users, insert_posts
