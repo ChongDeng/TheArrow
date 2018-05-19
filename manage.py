@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template, url_for
+from flask import render_template, url_for, request, redirect, flash
 
 from app import create_app, db
 from app.fake import insert_users, insert_posts
@@ -87,8 +87,14 @@ def insert_roles_test():
 def bootstrap_test():
     return render_template("my_bootstrap_test.html")
 
-@app.route('/bootstrap_signin')
+@app.route('/bootstrap_signin', methods=['GET', 'POST'])
 def bootstrap_signin():
+    if request.method == 'POST':
+        print("email:", request.form['scut_email'])
+        print("pwd:", request.form['scut_password'])
+        if request.form['scut_email'] == 'a@qq.com' and request.form['scut_password'] == 'b':
+            return redirect("main")
+        flash('Invalid email or password.')
     return render_template("my_bootstrap_signin.html")
 
 @app.route('/insert_fake')
