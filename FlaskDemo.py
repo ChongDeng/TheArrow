@@ -341,6 +341,20 @@ def web_form_test4():
         return redirect(url_for('web_form_test4'))
     return render_template('custom_form2.html', form=form, name=session.get('name'))
 
+
+@app.route('/wtf_form', methods=['GET', 'POST'])
+def wtf_form_test():
+    from scut_forms import AdminProfileForm
+    form = AdminProfileForm()
+    if form.validate_on_submit():
+        print("date: ", form.birthday.data)
+        return redirect(url_for('scut_success'))
+    return render_template('custom_form.html', form=form)
+
+@app.route('/scut_success')
+def scut_success():
+    return "cool!"
+
 #####################################  flash test
 
 @app.route('/flash', methods=['GET', 'POST'])
