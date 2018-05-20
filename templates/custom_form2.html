@@ -33,15 +33,21 @@
             </div>
             <div class="form-group  required">
                 <label class="control-label" for="password">Password</label>
-                {{ form.password(class="form-control",id="password",required="required",type="password",value="",placeholder="Enter email") }}
+                {{ form.password(class="form-control",id="password",required="required",type="password",value="",placeholder="Enter password") }}
             </div>
+
+            <div class="form-group">
+                    <label class="control-label" for="role">Upload to the folder: </label>
+                   {{ form.role(class="form-control", id="role", required="required") }}
+            </div>
+
             <div class="checkbox">
                 <label>
                     <input id="remember_me" name="remember_me" type="checkbox" value="y"> Remember me
                 </label>
             </div>
             {{ form.submit(class="btn btn-success btn-block") }}
-            <a href="{{ url_for('web_form_test4') }}" class="btn btn-danger btn-block" role="button">Register</a>
+            <a href="{{ url_for('scut_success') }}" class="btn btn-danger btn-block" role="button">Register</a>
     </form>
 
 {% endblock %}

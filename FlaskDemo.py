@@ -39,7 +39,7 @@ moment = Moment(app)
 
 
 from flask_wtf import Form, FlaskForm
-from wtforms import StringField, SubmitField, FileField, PasswordField, TextAreaField, BooleanField
+from wtforms import StringField, SubmitField, FileField, PasswordField, TextAreaField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 
 
@@ -329,16 +329,17 @@ def web_form_test3():
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(5, 64), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
+    role = SelectField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Log In')
-
 
 @app.route('/web_form4', methods=['GET', 'POST'])
 def web_form_test4():
     form = LoginForm()
     if form.validate_on_submit():
+        print("role:", form.role.data)
         session['name'] = form.email.data
-        return redirect(url_for('web_form_test4'))
+        return redirect(url_for('scut_success'))
     return render_template('custom_form2.html', form=form, name=session.get('name'))
 
 
