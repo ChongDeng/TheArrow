@@ -39,8 +39,9 @@ moment = Moment(app)
 
 
 from flask_wtf import Form, FlaskForm
-from wtforms import StringField, SubmitField, FileField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, FileField, PasswordField, TextAreaField, BooleanField
+from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
+
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[DataRequired()])
@@ -301,6 +302,44 @@ def web_form_test2():
         session['name'] = form.name.data
         return redirect(url_for('web_form_test2'))
     return render_template('index.html', form=form, name=session.get('name'))
+
+
+class CustomForm(Form):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()])
+    username = StringField('Username', validators=[
+        DataRequired(), Length(1, 64),
+        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+               'Usernames must have only letters, numbers, dots or '
+               'underscores')])
+    password = PasswordField('Password', validators=[
+        DataRequired(), EqualTo('password2', message='Passwords must match.')])
+    password2 = PasswordField('Confirm password', validators=[DataRequired()])
+    submit = SubmitField('Register')
+
+@app.route('/web_form3', methods=['GET', 'POST'])
+def web_form_test3():
+    form = CustomForm()
+    if form.validate_on_submit():
+        session['name'] = form.username.data
+        return redirect(url_for('web_form_test3'))
+    return render_template('custom_form.html', form=form, name=session.get('name'))
+
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(5, 64), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember me')
+    submit = SubmitField('Log In')
+
+
+@app.route('/web_form4', methods=['GET', 'POST'])
+def web_form_test4():
+    form = LoginForm()
+    if form.validate_on_submit():
+        session['name'] = form.email.data
+        return redirect(url_for('web_form_test4'))
+    return render_template('custom_form2.html', form=form, name=session.get('name'))
 
 #####################################  flash test
 
